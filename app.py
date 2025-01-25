@@ -76,10 +76,19 @@ def downloadChartData(stageParamData):
 def downloadMusic():
     stageFolder = util.convertPath("ios/gc2/stage")
     for stageFilename in os.listdir(stageFolder):
-        names = [name
-                 for datData in util.getDatsFromZip(os.path.join(stageFolder, stageFilename))
-                 for name in util.getNamesFromChart(datData)
-                 if not name.lower().endswith(("_hard", "_normal", "_easy", "_h", "_n", "_e"))]
+        #names = [name
+        #         for datData in util.getDatsFromZip(os.path.join(stageFolder, stageFilename))
+        #         for name in util.getNamesFromChart(datData)
+        #         if not name.lower().endswith(("_hard", "_normal", "_easy", "_h", "_n", "_e"))]
+        names = []
+        try:
+            stage_path = os.path.join(stageFolder, stageFilename)
+            for datData in util.getDatsFromZip(stage_path):
+                for name in util.getNamesFromChart(datData):
+                    if not name.lower().endswith(("_hard", "_normal", "_easy", "_h", "_n", "_e")):
+                        names.append(name)
+        except:
+            pass
         names = list(dict.fromkeys(names))  # Removes duplicates
         [util.downloadIfNotExists(util.musicUrl % name, bruteForce=False)
          for name in names]
